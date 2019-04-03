@@ -1,0 +1,168 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-parent</artifactId>
+        <version>2.1.0.RELEASE</version>
+        <relativePath/> <!-- lookup parent from repository -->
+    </parent>
+
+
+    <groupId>com.xie</groupId>
+    <artifactId>SpringBootTests</artifactId>
+    <version>1.0-SNAPSHOT</version>
+    <!--  <packaging>war</packaging>-->
+
+    <name>SpringBootTests</name>
+    <!-- FIXME change it to the project's website -->
+    <url>http://www.example.com</url>
+
+    <properties>
+        <release.dir>${project.build.directory}/${project.artifactId}-${project.version}</release.dir>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <maven.compiler.source>1.8</maven.compiler.source>
+        <maven.compiler.target>1.8</maven.compiler.target>
+    </properties>
+
+    <dependencies>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-web</artifactId>
+            <!--排除tomcat依赖-->
+            <!--<exclusions>
+                <exclusion>
+                    <groupId>org.springframework.boot</groupId>
+                    <artifactId>spring-boot-starter-tomcat</artifactId>
+                </exclusion>
+            </exclusions>-->
+        </dependency>
+
+        <!--<dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-tomcat</artifactId>
+            <scope>provided</scope>
+        </dependency>-->
+    </dependencies>
+
+    <build>
+        <!--打包后的项目名称  -->
+        <!--<finalName>SpringBootT</finalName>-->
+        <resources>
+            <!--mybatis 资源文件打包到dao-->
+            <resource>
+                <directory>src/main/java/com/catt/dao</directory>
+                <includes>
+                    <include>*.xml</include>
+                </includes>
+                <targetPath>com/catt/dao</targetPath>
+            </resource>
+            <resource>
+                <directory>src/main/resources</directory>
+                <includes>
+                    <include>**/*.*</include>
+                </includes>
+            </resource>
+        </resources>
+
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.1</version>
+                <configuration>
+                    <source>1.8</source>
+                    <target>1.8</target>
+                </configuration>
+            </plugin>
+            <!--记得使用springboot的maven插件进行打包-->
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>repackage</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <!---->
+            <!--<plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-dependency-plugin</artifactId>
+                <version>2.8</version>
+                <executions>
+                    <execution>
+                        <id>copy-dependencies</id>
+                        <phase>prepare-package</phase>
+                        <goals>
+                            <goal>copy-dependencies</goal>
+                        </goals>
+                        <configuration>
+                            <outputDirectory>${release.dir}/lib</outputDirectory>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>-->
+
+            <!-- 目录复制、删除 -->
+            <!--复制 Assembly 生成的jar包，需要放在Maven Assembly Plugin插件之后 -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-antrun-plugin</artifactId>
+                <version>1.8</version>
+                <executions>
+                    <execution>
+                        <id>ant-build</id>
+                        <phase>package</phase>
+                        <configuration>
+                            <target>
+                                <echo>拷贝文件</echo>
+                                <copy todir="${release.dir}">
+                                    <fileset dir="src/main/resources">
+                                    </fileset>
+                                </copy>
+                                <copy todir="${release.dir}/config">
+                                    <fileset dir="config">
+                                    </fileset>
+                                </copy>
+
+                                <echo>拷贝编译jar文件</echo>
+                                <copy
+                                        file="${release.dir}.jar"
+                                        tofile="${release.dir}/${project.artifactId}-${project.version}.jar"/>
+                            </target>
+                        </configuration>
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <plugin>
+                <groupId>com.xie</groupId>
+                <artifactId>xyj-pack-maven-plugin</artifactId>
+                <version>1.0-SNAPSHOT</version>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>package-Plugin</goal>
+                        </goals>
+                        <phase>package</phase>
+                        <configuration>
+                            <releaseDir>${release.dir}</releaseDir>
+                            <mainClass>com.xie.MainApplication</mainClass>
+                            <!--<jvmXms>125m</jvmXms>
+                            <jvmXmx>256m</jvmXmx>-->
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+</project>
